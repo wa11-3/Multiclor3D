@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class ManagerScript : MonoBehaviour
@@ -14,18 +16,77 @@ public class ManagerScript : MonoBehaviour
     Texture2D screenCapture;
     CamScript camScript;
 
+    bool shoowingPhoto;
+    public bool shoowingOption;
+    bool shoowingControls;
+
+    public GameObject optionPn;
+    public GameObject controlsPn;
+
+    public static ManagerScript Instance { get; private set; }
+    private void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(this);
+        }
+        else
+        {
+            Instance = this;
+        }
+    }
+
     private void Start()
     {
+        Cursor.lockState = CursorLockMode.Locked;
         screenCapture = new Texture2D(Screen.width, Screen.height, TextureFormat.RGB24, false);
         camScript = Camera.main.GetComponent<CamScript>();
+        shoowingPhoto = false;
+        shoowingOption = false;
     }
 
     private void Update()
     {
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            DialogControler.Instance.ShowingDialog();
+        }
+
         if (Input.GetMouseButtonDown(1))
         {
-            Debug.Log("Tomando foto");
-            StartCoroutine(Capture());
+            if (!shoowingPhoto)
+            {
+                StartCoroutine(Capture());
+                shoowingPhoto = true;
+            }
+            else
+            {
+                photoBG.SetActive(false);
+                shoowingPhoto = false;
+            }
+        }
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (shoowingControls)
+            {
+                controlsPn.SetActive(false);
+                shoowingControls = false;
+            }
+            else if (!shoowingOption)
+            {
+                Time.timeScale = 0f;
+                Cursor.lockState = CursorLockMode.None;
+                shoowingOption = true;
+                optionPn.SetActive(true);
+            }
+            else
+            {
+                Time.timeScale = 1f;
+                Cursor.lockState = CursorLockMode.Locked;
+                shoowingOption = false;
+                optionPn.SetActive(false);
+            }
         }
     }
 
@@ -38,8 +99,8 @@ public class ManagerScript : MonoBehaviour
 
         screenCapture.ReadPixels(regiontoRead, 0, 0, false);
         screenCapture.Apply();
-        camScript.enabled = true;
         ShowPhoto();
+        camScript.enabled = true;
     }
 
     void ShowPhoto()
@@ -48,5 +109,18 @@ public class ManagerScript : MonoBehaviour
         photoArea.sprite = photoSprite;
         photoBG.SetActive(true);
     }
+
+    #region OptionsBts
+    public void OnClickControls()
+    {
+        controlsPn.SetActive(true);
+        shoowingControls = true;
+    }
+
+    public void OnClickExit()
+    {
+        Application.Quit();
+    }
+    #endregion
 
 }

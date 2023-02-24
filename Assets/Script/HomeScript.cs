@@ -23,7 +23,7 @@ public class HomeScript : MonoBehaviour
         {
             if (SceneManager.GetActiveScene().name == "Home")
             {
-                SceneManager.LoadScene("Intro");
+                SceneManager.LoadScene("Laboratory");
             }
             else
             {

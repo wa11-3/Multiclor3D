@@ -1,6 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerScript : MonoBehaviour
 {
@@ -8,35 +7,66 @@ public class PlayerScript : MonoBehaviour
     public float speed = 10.0f;
     public float distance;
 
+    public GameObject showCase;
+
+    public Material brokenGlass;
+
     CharacterController controller;
 
+    GameObject colorObject;
+    GameObject roomObject;
     Outline targetVisual;
     Animator targetAnim;
 
+    bool haveHammer = false;
+    bool glassBroken = false;
 
     private void Start()
     {
         controller = GetComponent<CharacterController>();
-        Cursor.lockState = CursorLockMode.Locked;
+        colorObject = GameObject.FindGameObjectWithTag("ColorObject");
     }
 
     private void Update()
     {
-        float moveForward = Input.GetAxis("Vertical");
-        float moveSide = Input.GetAxis("Horizontal");
-
-        Vector3 move = transform.right * moveSide + transform.forward * moveForward;
-
-        controller.Move(move * speed * Time.deltaTime);
-
-        if (Input.GetKeyDown(KeyCode.E) && targetVisual != null)
+        if (!ManagerScript.Instance.shoowingOption)
         {
-            targetAnim.SetTrigger("Interact");
-        }
+            if (Input.GetMouseButtonDown(0) && targetVisual != null)
+            {
+                if (roomObject.CompareTag("Hammer"))
+                {
+                    Destroy(roomObject);
+                    roomObject = null;
+                    haveHammer = true;
+                }
+                else if (roomObject.CompareTag("GlassLab"))
+                {
+                    if (haveHammer && !glassBroken)
+                    {
+                        roomObject.GetComponent<MeshRenderer>().material = brokenGlass;
+                        glassBroken = true;
+                    }
+                    else if (glassBroken)
+                    {
+                        Destroy(colorObject);
+                    }
+                    else
+                    {
+                        DialogControler.Instance.ShowingDialog(4);
+                    }
+                }
+                else
+                {
+                    targetAnim.SetTrigger("Interact");
+                }
+            }
 
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            Cursor.lockState = CursorLockMode.None;
+            float moveForward = Input.GetAxis("Vertical");
+            float moveSide = Input.GetAxis("Horizontal");
+
+            Vector3 move = transform.right * moveSide + transform.forward * moveForward;
+
+            controller.Move(move * speed * Time.deltaTime);
         }
     }
 
@@ -47,9 +77,11 @@ public class PlayerScript : MonoBehaviour
 
         if (Physics.Raycast(ray, out hit, distance))
         {
+            roomObject = hit.collider.gameObject;
+
             if (hit.collider.gameObject.GetComponent<Outline>() != null)
             {
-                targetVisual = hit.collider.gameObject.GetComponent<Outline>();
+                targetVisual = roomObject.GetComponent<Outline>();
                 targetVisual.enabled = true;
                 targetAnim = hit.collider.gameObject.GetComponentInParent<Animator>();
             }
@@ -65,17 +97,13 @@ public class PlayerScript : MonoBehaviour
         }
         else
         {
-            if (targetVisual != null)
+            if (targetVisual != null && SceneManager.GetActiveScene().name == "Laboratory")
             {
                 targetVisual.enabled = false;
+                showCase.GetComponent<Outline>().enabled = false;
                 targetVisual = null;
                 targetAnim = null;
             }
         }
-    }
-
-    private void OnCollisionEnter(Collision collision)
-    {
-        //Debug.Log(collision.transform.name);
     }
 }

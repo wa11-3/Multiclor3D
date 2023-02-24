@@ -4,20 +4,25 @@ using UnityEngine;
 
 public class SoundManager : MonoBehaviour
 {
+    public AudioSource audioPlayer;
     public AudioClip[] audioEfects;
+
+    public static SoundManager Instance { get; private set; }
+    private void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(this);
+        }
+        else
+        {
+            Instance = this;
+        }
+        DontDestroyOnLoad(this);
+    }
 
     private void Start()
     {
-        Debug.Log("TEST");
-    }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        Debug.Log("IN");
-    }
-
-    private void OnTriggerExit(Collider other)
-    {
-        Debug.Log("OUT");
+        audioPlayer = GetComponent<AudioSource>();
     }
 }

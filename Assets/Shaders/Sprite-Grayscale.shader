@@ -1,6 +1,4 @@
-﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
-
-Shader "Custom/Sprite-Grayscale"
+﻿Shader "Custom/Sprite-Grayscale"
 {
     Properties
     {
