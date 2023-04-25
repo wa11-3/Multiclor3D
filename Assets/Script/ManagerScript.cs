@@ -19,9 +19,13 @@ public class ManagerScript : MonoBehaviour
     bool shoowingPhoto;
     public bool shoowingOption;
     bool shoowingControls;
+    bool shoowingMachine;
 
     public GameObject optionPn;
     public GameObject controlsPn;
+
+    public GameObject machine;
+    public TMP_Text machineTx;
 
     public static ManagerScript Instance { get; private set; }
     private void Awake()
@@ -43,10 +47,30 @@ public class ManagerScript : MonoBehaviour
         camScript = Camera.main.GetComponent<CamScript>();
         shoowingPhoto = false;
         shoowingOption = false;
+        shoowingMachine = false;
     }
 
     private void Update()
     {
+        if (shoowingMachine)
+        {
+            machineTx.text = TimerController.Instance.TimerManager();
+        }
+
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            if (!shoowingMachine)
+            {
+                machine.SetActive(true);
+                shoowingMachine = true;
+            }
+            else
+            {
+                machine.SetActive(false);
+                shoowingMachine = false;
+            }
+        }
+
         if (Input.GetKeyDown(KeyCode.E))
         {
             DialogControler.Instance.ShowingDialog();

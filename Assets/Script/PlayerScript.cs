@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -10,6 +11,7 @@ public class PlayerScript : MonoBehaviour
     public GameObject showCase;
 
     public Material brokenGlass;
+    public Material blueMaterial;
 
     CharacterController controller;
 
@@ -21,10 +23,32 @@ public class PlayerScript : MonoBehaviour
     bool haveHammer = false;
     bool glassBroken = false;
 
+    public bool viewGlass;
+
+    int greenPiece = 0;
+    int lightObject = 23;
+
+    CharacterController characterController;
+
     private void Start()
     {
+        characterController = GetComponent<CharacterController>();
         controller = GetComponent<CharacterController>();
         colorObject = GameObject.FindGameObjectWithTag("ColorObject");
+        if (SceneManager.GetActiveScene().name == "Laboratory")
+        {
+            viewGlass = false;
+        }
+        else if (SceneManager.GetActiveScene().name == "Castle")
+        {
+            blueMaterial.color = new Color(1, 1, 1);
+            StartCoroutine(DialogHelp(40.0f, 4));
+            StartCoroutine(DialogHelp(45.0f, 5));
+        }
+        else if (SceneManager.GetActiveScene().name == "Departament")
+        {
+            StartCoroutine(DialogHelp(20.0f, 4));
+        }
     }
 
     private void Update()
@@ -33,32 +57,7 @@ public class PlayerScript : MonoBehaviour
         {
             if (Input.GetMouseButtonDown(0) && targetVisual != null)
             {
-                if (roomObject.CompareTag("Hammer"))
-                {
-                    Destroy(roomObject);
-                    roomObject = null;
-                    haveHammer = true;
-                }
-                else if (roomObject.CompareTag("GlassLab"))
-                {
-                    if (haveHammer && !glassBroken)
-                    {
-                        roomObject.GetComponent<MeshRenderer>().material = brokenGlass;
-                        glassBroken = true;
-                    }
-                    else if (glassBroken)
-                    {
-                        Destroy(colorObject);
-                    }
-                    else
-                    {
-                        DialogControler.Instance.ShowingDialog(4);
-                    }
-                }
-                else
-                {
-                    targetAnim.SetTrigger("Interact");
-                }
+                ObjectsController();
             }
 
             float moveForward = Input.GetAxis("Vertical");
@@ -68,6 +67,14 @@ public class PlayerScript : MonoBehaviour
 
             controller.Move(move * speed * Time.deltaTime);
         }
+
+        //if (lightObject <= 0)
+        //{
+        //    colorObject.GetComponent<MeshRenderer>().material = blueMaterial;
+        //    colorObject.AddComponent<Outline>();
+        //}
+
+        characterController.Move(new Vector3(0, -0.1f, 0));
     }
 
     private void FixedUpdate()
@@ -97,13 +104,84 @@ public class PlayerScript : MonoBehaviour
         }
         else
         {
-            if (targetVisual != null && SceneManager.GetActiveScene().name == "Laboratory")
+            if (targetVisual != null)
             {
                 targetVisual.enabled = false;
-                showCase.GetComponent<Outline>().enabled = false;
                 targetVisual = null;
                 targetAnim = null;
+                if (SceneManager.GetActiveScene().name == "Laboratory")
+                {
+                    showCase.GetComponent<Outline>().enabled = false;
+                }
             }
         }
+    }
+
+    private void ObjectsController()
+    {
+        if (roomObject.CompareTag("Hammer"))
+        {
+            Destroy(roomObject);
+            roomObject = null;
+            haveHammer = true;
+        }
+        else if (roomObject.CompareTag("GlassLab"))
+        {
+            viewGlass = true;
+            if (haveHammer && !glassBroken)
+            {
+                roomObject.GetComponent<MeshRenderer>().material = brokenGlass;
+                glassBroken = true;
+            }
+            else if (glassBroken)
+            {
+                Destroy(colorObject);
+                StartCoroutine(GotoScene("Castle"));
+            }
+            else
+            {
+                DialogControler.Instance.ShowingDialog(4);
+            }
+        }
+        else if (roomObject.CompareTag("LightObject"))
+        {
+            Destroy(roomObject.transform.parent.gameObject);
+            blueMaterial.color = new Color(blueMaterial.color.r - 0.0431f, blueMaterial.color.g - 0.0431f, blueMaterial.color.b);
+            lightObject -= 1;
+        }
+        else if (roomObject.CompareTag("GreenPiece"))
+        {
+            Destroy(roomObject);
+            greenPiece += 1;
+
+            if (greenPiece == 7)
+            {
+                SceneManager.LoadScene("Home");
+            }
+        }
+        else if (roomObject.CompareTag("ColorObject"))
+        {
+            if (SceneManager.GetActiveScene().name == "Castle")
+            {
+                Destroy(roomObject.transform.parent.gameObject);
+                StartCoroutine(GotoScene("Departament"));
+            }
+        }
+        else
+        {
+            targetAnim.SetTrigger("Interact");
+        }
+    }
+
+    IEnumerator GotoScene(string sceneName)
+    {
+        yield return new WaitForSeconds(1.0f);
+        SceneManager.LoadScene(sceneName);
+    }
+
+    IEnumerator DialogHelp(float waitTime,int numDialog)
+    {
+        yield return new WaitForSeconds(waitTime);
+        DialogControler.Instance.ShowingDialog(numDialog);
     }
 }

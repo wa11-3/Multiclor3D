@@ -7,6 +7,9 @@ TagManager:
   - Hammer
   - GlassLab
   - ColorObject
+  - GreenPiece
+  - LightObject
+  - Timer
   layers:
   - Default
   - TransparentFX

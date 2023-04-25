@@ -23,14 +23,22 @@ public class DialogControler : MonoBehaviour
     public float[] helpDelay;
     public AudioClip[] helpAudios;
 
+    public string[] timeDialog;
+    public float[] timeDelay;
+    public AudioClip[] timeAudios;
+
     Dictionary<string, int> specificDialogNum = new Dictionary<string, int>()
     {
         { "Laboratory", 1 },
+        { "Castle", 2 },
+        { "Departament", 0 },
     };
 
     public int atMomentDialog;
     public int exceptDialog;
     public int lastDialog;
+
+    public string sceneName;
 
     public static DialogControler Instance { get; private set; }
     private void Awake()
@@ -48,10 +56,17 @@ public class DialogControler : MonoBehaviour
     private void Start()
     {
         audioPlayer = GetComponent<AudioSource>();
-        showingDialog = false;
-        //StartCoroutine(IntroDialog());
-        //audioPlayer.PlayOneShot(introAudio);
-        exceptDialog = specificDialogNum[SceneManager.GetActiveScene().name];
+        showingDialog = true;
+        StartCoroutine(IntroDialog());
+        audioPlayer.PlayOneShot(introAudio);
+        sceneName = SceneManager.GetActiveScene().name;
+        exceptDialog = specificDialogNum[sceneName];
+    }
+
+    public void TimeDialog(int timeNum)
+    {
+        //showingDialog = true;
+        StartCoroutine(SpecificTimeDialog(timeNum));
     }
 
     public void ShowingDialog()
@@ -78,14 +93,11 @@ public class DialogControler : MonoBehaviour
         }
     }
 
-    IEnumerator IntroDialog()
+    void IntroDialogAction(int numDialog)
     {
-        dialogPn.SetActive(true);
-        for (int i = 0; i < introDialog.Length; i++)
+        if (sceneName == "Laboratory")
         {
-            yield return new WaitForSeconds(introDelay[i]);
-
-            switch (i)
+            switch (numDialog)
             {
                 case 1:
                     ManagerScript.Instance.controlsPn.SetActive(true);
@@ -99,6 +111,60 @@ public class DialogControler : MonoBehaviour
                     chloeIma.SetActive(false);
                     break;
             }
+        }
+        else if (sceneName == "Castle")
+        {
+            switch (numDialog)
+            {
+                case 0:
+                    oniIma.SetActive(false);
+                    chloeIma.SetActive(true);
+                    break;
+                case 1:
+                    oniIma.SetActive(true);
+                    chloeIma.SetActive(false);
+                    break;
+                case 2:
+                    oniIma.SetActive(false);
+                    chloeIma.SetActive(true);
+                    break;
+                case 3:
+                    oniIma.SetActive(true);
+                    chloeIma.SetActive(false);
+                    break;
+            }
+        }
+        else if (sceneName == "Departament")
+        {
+            switch (numDialog)
+            {
+                case 0:
+                    oniIma.SetActive(false);
+                    chloeIma.SetActive(true);
+                    break;
+                case 1:
+                    oniIma.SetActive(true);
+                    chloeIma.SetActive(false);
+                    break;
+                case 2:
+                    oniIma.SetActive(false);
+                    chloeIma.SetActive(true);
+                    break;
+                case 3:
+                    oniIma.SetActive(true);
+                    chloeIma.SetActive(false);
+                    break;
+            }
+        }
+    }
+
+    IEnumerator IntroDialog()
+    {
+        dialogPn.SetActive(true);
+        for (int i = 0; i < introDialog.Length; i++)
+        {
+            yield return new WaitForSeconds(introDelay[i]);
+            IntroDialogAction(i);
             dialogText.text = introDialog[i];
         }
         ManagerScript.Instance.controlsPn.SetActive(false);
@@ -136,5 +202,22 @@ public class DialogControler : MonoBehaviour
         dialogPn.SetActive(false);
         showingDialog = false;
         exceptDialog = 0;
+    }
+
+    IEnumerator SpecificTimeDialog (int dialogNumb)
+    {
+        while (showingDialog)
+        {
+            yield return new WaitForSeconds(1.0f);
+        }
+        showingDialog = true;
+        dialogText.text = timeDialog[dialogNumb];
+        oniIma.SetActive(true);
+        chloeIma.SetActive(false);
+        dialogPn.SetActive(true);
+        audioPlayer.PlayOneShot(timeAudios[dialogNumb]);
+        yield return new WaitForSeconds(timeDelay[dialogNumb]);
+        dialogPn.SetActive(false);
+        showingDialog = false;
     }
 }

@@ -15,6 +15,10 @@ public class HomeScript : MonoBehaviour
     private void Start()
     {
         StartCoroutine(SpaceLoop());
+        if (SceneManager.GetActiveScene().name == "GameOver")
+        {
+            Destroy(GameObject.FindGameObjectWithTag("Timer"));
+        }
     }
 
     private void Update()
@@ -23,11 +27,11 @@ public class HomeScript : MonoBehaviour
         {
             if (SceneManager.GetActiveScene().name == "Home")
             {
-                SceneManager.LoadScene("Laboratory");
+                SceneManager.LoadScene("Intro");
             }
             else
             {
-                SceneManager.LoadScene("Menu");
+                SceneManager.LoadScene("Home");
             }
         }
     }

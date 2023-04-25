@@ -9,6 +9,18 @@ EditorBuildSettings:
     path: Assets/Scenes/Home.unity
     guid: 50562e7d0caff4ce9a26f73761cfd9bd
   - enabled: 1
+    path: Assets/Scenes/Intro.unity
+    guid: 621c0be16c966493b8f051135bf91cc8
+  - enabled: 1
     path: Assets/Scenes/Laboratory.unity
     guid: b151035d3510c422983c6ac2fb64f456
+  - enabled: 1
+    path: Assets/Scenes/Castle.unity
+    guid: 3adc9de35da9c4b3aa9af7e8d8c14832
+  - enabled: 1
+    path: Assets/Scenes/Departament.unity
+    guid: 61af95b1171194efeae22ae65e5b57f9
+  - enabled: 1
+    path: Assets/Scenes/GameOver.unity
+    guid: b171215be85894ebba986406c476dd37
   m_configObjects: {}
