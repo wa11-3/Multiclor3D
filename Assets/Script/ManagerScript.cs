@@ -134,6 +134,12 @@ public class ManagerScript : MonoBehaviour
         photoBG.SetActive(true);
     }
 
+    public void ShowLastChoice()
+    {
+        shoowingMachine = true;
+        machine.SetActive(true);
+    }
+
     #region OptionsBts
     public void OnClickControls()
     {

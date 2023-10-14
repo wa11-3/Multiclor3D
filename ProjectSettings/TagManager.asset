@@ -10,6 +10,10 @@ TagManager:
   - GreenPiece
   - LightObject
   - Timer
+  - Dialog
+  - Manager
+  - Sound
+  - Music
   layers:
   - Default
   - TransparentFX

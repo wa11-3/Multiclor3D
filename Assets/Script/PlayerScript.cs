@@ -156,6 +156,10 @@ public class PlayerScript : MonoBehaviour
 
             if (greenPiece == 7)
             {
+                //speed = 0;
+                //GetComponentInChildren<CameraScript>().enabled = false;
+                //ManagerScript manager = GameObject.FindGameObjectWithTag("Manager").GetComponent<ManagerScript>();
+                //manager.ShowLastChoice();
                 SceneManager.LoadScene("Home");
             }
         }

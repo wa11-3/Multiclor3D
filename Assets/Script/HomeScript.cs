@@ -15,10 +15,18 @@ public class HomeScript : MonoBehaviour
     private void Start()
     {
         StartCoroutine(SpaceLoop());
-        if (SceneManager.GetActiveScene().name == "GameOver")
-        {
-            Destroy(GameObject.FindGameObjectWithTag("Timer"));
-        }
+        Destroy(GameObject.FindGameObjectWithTag("Timer"));
+        Destroy(GameObject.FindGameObjectWithTag("Music"));
+        Destroy(GameObject.FindGameObjectWithTag("Sound"));
+
+        //if (SceneManager.GetActiveScene().name == "GameOver")
+        //{
+        //    Destroy(GameObject.FindGameObjectWithTag("Timer"));
+        //    Destroy(GameObject.FindGameObjectWithTag("Sound"));
+        //    Destroy(GameObject.FindGameObjectWithTag("Manager"));
+        //    Destroy(GameObject.FindGameObjectWithTag("Music"));
+        //    Destroy(GameObject.FindGameObjectWithTag("Dialog"));
+        //}
     }
 
     private void Update()
@@ -62,6 +70,5 @@ public class HomeScript : MonoBehaviour
                 }
             }
         }
-
     }
 }
